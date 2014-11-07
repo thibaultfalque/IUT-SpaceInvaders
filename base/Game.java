@@ -47,7 +47,7 @@ public class Game extends Canvas {
 	/** True if the game is currently "running", i.e. the game loop is looping */
 	private boolean gameRunning = true;
 	
-	private ArrayList<AlienEntity> entities=new ArrayList<AlienEntity>();
+	//private ArrayList<AlienEntity> entities=new ArrayList<AlienEntity>();
 	
 	/** The list of entities that need to be removed from the game this loop */
 	private ArrayList<Entity> removeList = new ArrayList<Entity>();
@@ -142,7 +142,7 @@ public class Game extends Canvas {
 	 */
 	private void startGame() {
 		// clear out any existing entities and intialise a new set
-		entities.clear();
+		ua.get(niveauCourant).getArrayAlien().clear();
 		missile.clear();
 		missile=new ArrayList<ShotEntity>();
 		removeList.clear();
@@ -162,7 +162,7 @@ public class Game extends Canvas {
 		// create the player ship and place it roughly in the center of the screen
 		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
 		ua.get(niveauCourant).createArrayAlien();
-		entities=ua.get(niveauCourant).getArrayAlien();
+		//entities=ua.get(niveauCourant).getArrayAlien();
 		
 	}
 	
@@ -222,7 +222,7 @@ public class Game extends Canvas {
 		
 		// if there are still some aliens left then they all need to get faster, so
 		// speed up all the existing aliens
-		for(AlienEntity entity : entities) 
+		for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien()) 
 			entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
 		
 	}
@@ -274,7 +274,7 @@ public class Game extends Canvas {
 			
 			// cycle round asking each entity to move itself
 			if (!waitingForKeyPress) {
-				for(AlienEntity ae : entities)
+				for(AlienEntity ae : ua.get(niveauCourant).getArrayAlien())
 					ae.move(delta);
 				for(ShotEntity m : missile)
 					m.move(delta);
@@ -282,7 +282,7 @@ public class Game extends Canvas {
 			}
 			
 			// cycle round drawing all the entities we have in the game
-            for(AlienEntity entity : entities)
+            for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien())
 				entity.draw(g);
             if(missile!=null)
             	for(ShotEntity m:missile)
@@ -305,12 +305,12 @@ public class Game extends Canvas {
 				}*/
 				if(missile!=null){
 					for(ShotEntity m:missile)
-						for(AlienEntity ae:entities){
+						for(AlienEntity ae:ua.get(niveauCourant).getArrayAlien()){
 							
 							m.collidedWith(ae);
 							ae.collidedWith(m);
 						}
-					for(AlienEntity ae:entities)
+					for(AlienEntity ae:ua.get(niveauCourant).getArrayAlien())
 						ship.collidedWith(ae);
 				}
 				
@@ -319,7 +319,7 @@ public class Game extends Canvas {
 			
 			if(!removeList.isEmpty()){
 				System.out.println("REMOVE");
-				entities.removeAll(removeList);
+				ua.get(niveauCourant).getArrayAlien().removeAll(removeList);
 				missile.removeAll(removeList);
 				removeList.clear();
 			}
@@ -328,7 +328,7 @@ public class Game extends Canvas {
 			// be resolved, cycle round every entity requesting that
 			// their personal logic should be considered.
 			if (logicRequiredThisLoop) {
-			    for(Entity entity : entities) {
+			    for(Entity entity : ua.get(niveauCourant).getArrayAlien()) {
 					entity.doLogic();
 				}
 				logicRequiredThisLoop = false;
