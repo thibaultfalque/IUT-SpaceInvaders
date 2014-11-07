@@ -7,5 +7,5 @@ Refactoring d'un SpaceInvaders provenant de ce site: http://www.cokeandcode.com/
 
 TEXTURES/SPRITES:
 
-Toutes les textures viennent du site opengameart.com en particulier:
+Toutes les textures viennent du site http://opengameart.com en particulier:
 http://opengameart.org/content/space-ship-construction-kit
