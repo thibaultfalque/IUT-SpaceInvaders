@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import niveau.Niveau1;
 import niveau.Niveau2;
 import niveau.Niveau3;
+import niveau.RandomMove;
 import niveau.UsineAlien;
 import entities.AlienEntity;
 import entities.Entity;
@@ -219,11 +220,14 @@ public class Game extends Canvas {
 		if (ua.get(niveauCourant).getAlienCount() == 0) {
 			notifyWin();
 		}
-		
 		// if there are still some aliens left then they all need to get faster, so
 		// speed up all the existing aliens
-		for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien()) 
+		for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien()){
 			entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
+			//S'il reste moins de 5 aliens on change la strategie de déplacement
+			if(ua.get(niveauCourant).getAlienCount()<=5)
+				entity.setStrategieMove(new RandomMove());
+		}
 		
 	}
 	

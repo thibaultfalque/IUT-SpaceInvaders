@@ -19,6 +19,7 @@ public  abstract class UsineAlien {
 	
 	public void setAlienCount(int alienCount) {
 		this.alienCount = alienCount;
+
 	}
 	public ArrayList<AlienEntity> getArrayAlien(){
 		return entities;

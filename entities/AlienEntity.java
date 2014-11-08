@@ -33,7 +33,11 @@ public class AlienEntity extends Entity {
 		dx = -moveSpeed;
 		//dy = moveSpeed;
 	}
-
+	
+	
+	public void setStrategieMove(StrategieMove stratM){
+		move=stratM;
+	}
 	/**
 	 * Request that this alien moved based on time elapsed
 	 * 
