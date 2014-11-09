@@ -10,14 +10,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import Strategie.DiagonaleMove;
+import Strategie.GaucheDroiteDoLogic;
+import Strategie.RandomDoLogic;
+import Strategie.RandomMove;
 import niveau.Niveau1;
 import niveau.Niveau2;
 import niveau.Niveau3;
-import niveau.RandomMove;
 import niveau.UsineAlien;
 import entities.AlienEntity;
 import entities.Entity;
@@ -75,25 +79,29 @@ public class Game extends Canvas {
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
 	
+
 	
 	//paramètre après modif code
 	private ArrayList<UsineAlien> ua=new ArrayList<UsineAlien>();
 	private int niveauCourant=0;
 	private ArrayList<ShotEntity> missile=new ArrayList<ShotEntity>();
+	private final static int WIDTH=800;
+	private final static int HEIGHT=600;
+	private Score score;
 	/**
 	 * Construct our game and set it running.
 	 */
-	public Game() {
+	public Game(JFrame j) {
 		// create a frame to contain our game
-		JFrame container = new JFrame("Space Invaders 101");
+		JFrame container = new JFrame();
 		
 		// get hold the content of the frame and set up the resolution of the game
-		JPanel panel = (JPanel) container.getContentPane();
-		panel.setPreferredSize(new Dimension(800,600));
+		JPanel panel=(JPanel)container.getContentPane();
+		panel.setPreferredSize(new Dimension(WIDTH,HEIGHT));
 		panel.setLayout(null);
 		
 		// setup our canvas size and put it into the content of the frame
-		setBounds(0,0,800,600);
+		setBounds(0,0,WIDTH,HEIGHT);
 		panel.add(this);
 		
 		// Tell AWT not to bother repainting our canvas since we're
@@ -103,6 +111,7 @@ public class Game extends Canvas {
 		// finally make the window visible 
 		container.pack();
 		container.setResizable(false);
+		
 		container.setVisible(true);
 		
 		// add a listener to respond to the user closing the window. If they
@@ -129,12 +138,12 @@ public class Game extends Canvas {
 		// to see at startup
 		ua=new ArrayList<UsineAlien>();
 		ua.add(new Niveau1(this));
-		ua.add(new Niveau1(this));
 		ua.add(new Niveau2(this));
 		ua.add(new Niveau3(this));
-		//ua.add(new Niveau1(this));
-		//ua.add(new Niveau1(this));
+		ua.add(new Niveau3(this));
 		initEntities();
+		
+		score=new Score(WIDTH,HEIGHT);
 	}
 	
 	/**
@@ -148,7 +157,6 @@ public class Game extends Canvas {
 		missile=new ArrayList<ShotEntity>();
 		removeList.clear();
 		initEntities();
-		System.out.println("Start game "+niveauCourant);
 		// blank out any keyboard settings we might currently have
 		leftPressed = false;
 		rightPressed = false;
@@ -182,12 +190,12 @@ public class Game extends Canvas {
 	 * 
 	 * @param entity The entity that should be removed
 	 */
-	public void removeAlien(AlienEntity entity) {
+	public void remove(Entity entity) {
 		removeList.add(entity);
 	}
-	public void removeMissile(ShotEntity entity) {
+	/*public void removeMissile(ShotEntity entity) {
 		removeList.add(entity);
-	}
+	}*/
 	
 	/**
 	 * Notification that the player has died. 
@@ -206,7 +214,7 @@ public class Game extends Canvas {
 		if(niveauCourant>ua.size())
 			message="YOU HAVE FINISH THE GAME";
 		else
-			message = "Well done! You Win!\n";
+			message = "Well done! You Win in !\n Your score is "+score.getScore();
 		waitingForKeyPress = true;
 	}
 	
@@ -215,9 +223,10 @@ public class Game extends Canvas {
 	 */
 	public void notifyAlienKilled() {
 		// reduce the alient count, if there are none left, the player has won!
-		ua.get(niveauCourant).setAlienCount(ua.get(niveauCourant).getAlienCount()-1);
-		System.out.println("NB ALIEN "+ua.get(niveauCourant).getAlienCount());
-		if (ua.get(niveauCourant).getAlienCount() == 0) {
+		int alienCount=ua.get(niveauCourant).getAlienCount();
+		ua.get(niveauCourant).setAlienCount(alienCount-1);
+		alienCount=ua.get(niveauCourant).getAlienCount();
+		if (alienCount == 0) {
 			notifyWin();
 		}
 		// if there are still some aliens left then they all need to get faster, so
@@ -225,9 +234,13 @@ public class Game extends Canvas {
 		for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien()){
 			entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
 			//S'il reste moins de 5 aliens on change la strategie de déplacement
-			if(ua.get(niveauCourant).getAlienCount()<=5)
-				entity.setStrategieMove(new RandomMove());
+			if(alienCount==5)
+				entity.setStrategie(new RandomMove(),new GaucheDroiteDoLogic());
+			if(alienCount<=5){
+				entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.1);
+			}
 		}
+		score.augmenterScore(200);
 		
 	}
 	
@@ -274,7 +287,11 @@ public class Game extends Canvas {
 			// surface and blank it out
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.black);
-			g.fillRect(0,0,800,600);
+			g.fillRect(0,0,WIDTH,HEIGHT);
+			
+			g.setColor(Color.white);
+			g.drawString("Niveau: "+niveauCourant+1,10,20);
+			score.draw(g);
 			
 			// cycle round asking each entity to move itself
 			if (!waitingForKeyPress) {
@@ -286,8 +303,10 @@ public class Game extends Canvas {
 			}
 			
 			// cycle round drawing all the entities we have in the game
-            for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien())
-				entity.draw(g);
+            if(ua.get(niveauCourant).getArrayAlien()!=null)
+            	for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien())
+            			entity.draw(g);
+            		
             if(missile!=null)
             	for(ShotEntity m:missile)
             		m.draw(g);
@@ -296,33 +315,28 @@ public class Game extends Canvas {
 			// every other entity. If any of them collide notify 
 			// both entities that the collision has occured
 			if(!waitingForKeyPress){
-				/*for (int p=0;p<entities.size();p++) {
-					for (int s=p+1;s<entities.size();s++) {
-						Entity me = entities.get(p);
-						Entity him = entities.get(s);
-						
-						if (me.collidesWith(him)) {
-							me.collidedWith(him);
-							him.collidedWith(me);
-						}
-					}
-				}*/
 				if(missile!=null){
 					for(ShotEntity m:missile)
 						for(AlienEntity ae:ua.get(niveauCourant).getArrayAlien()){
-							
 							m.collidedWith(ae);
 							ae.collidedWith(m);
 						}
 					for(AlienEntity ae:ua.get(niveauCourant).getArrayAlien())
 						ship.collidedWith(ae);
 				}
+				for(int i=0;i<ua.get(niveauCourant).getArrayAlien().size();i++){
+					AlienEntity ae1=ua.get(niveauCourant).getArrayAlien().get(i);
+					for(int j=i+1;j<ua.get(niveauCourant).getArrayAlien().size();j++){
+						AlienEntity ae2=ua.get(niveauCourant).getArrayAlien().get(j);
+						ae1.collidedWith(ae2);
+						ae2.collidedWith(ae1);
+					}
+				}
 				
 			}
 			// remove any entity that has been marked for clear up
 			
-			if(!removeList.isEmpty()){
-				System.out.println("REMOVE");
+			if(!removeList.isEmpty()){ 
 				ua.get(niveauCourant).getArrayAlien().removeAll(removeList);
 				missile.removeAll(removeList);
 				removeList.clear();
@@ -403,8 +417,6 @@ public class Game extends Canvas {
 			if (waitingForKeyPress) {
 				return;
 			}
-			
-			
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				leftPressed = true;
 			}
@@ -451,6 +463,7 @@ public class Game extends Canvas {
 			// have had a keyType() event from the user releasing
 			// the shoot or move keys, hence the use of the "pressCount"
 			// counter.
+			System.out.println("appui");
 			if (waitingForKeyPress) {
 				if (pressCount == 1) {
 					// since we've now recieved our key typed
@@ -471,19 +484,5 @@ public class Game extends Canvas {
 		}
 	}
 	
-	/**
-	 * The entry point into the game. We'll simply create an
-	 * instance of class which will start the display and game
-	 * loop.
-	 * 
-	 * @param argv The arguments that are passed into our game
-	 */
-	public static void main(String argv[]) {
-		Game g =new Game();
 
-		// Start the main game loop, note: this method will not
-		// return until the game has finished running. Hence we are
-		// using the actual main thread to run the game.
-		g.gameLoop();
-	}
 }

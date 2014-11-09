@@ -1,6 +1,8 @@
 package niveau;
 
 import entities.AlienEntity;
+import Strategie.GaucheDroiteDoLogic;
+import Strategie.GaucheDroiteMove;
 import base.Game;
 
 public class Niveau1 extends UsineAlien {
@@ -14,7 +16,7 @@ public class Niveau1 extends UsineAlien {
 		alienCount = 0;
 		for (int row=0;row<3;row++) {
 			for (int x=0;x<10;x++) {
-				AlienEntity alien = new AlienEntity(game,"sprites/alien.gif",100+(x*50),(50)+row*30,new GaucheDroiteMove(),new GaucheDroiteDoLogic());
+				AlienEntity alien = new AlienEntity(game,"sprites/alien.png",100+(x*50),(50)+row*30,new GaucheDroiteMove(),new GaucheDroiteDoLogic());
 				entities.add(alien);
 				alienCount++;
 			}

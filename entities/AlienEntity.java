@@ -1,7 +1,7 @@
 package entities;
 
-import niveau.StrategieDoLogic;
-import niveau.StrategieMove;
+import Strategie.StrategieDoLogic;
+import Strategie.StrategieMove;
 import base.Game;
 
 /**
@@ -31,12 +31,12 @@ public class AlienEntity extends Entity {
 		doLogic=dl;
 		this.game = game;
 		dx = -moveSpeed;
-		//dy = moveSpeed;
 	}
 	
 	
-	public void setStrategieMove(StrategieMove stratM){
+	public void setStrategie(StrategieMove stratM,StrategieDoLogic stratD){
 		move=stratM;
+		doLogic=stratD;
 	}
 	/**
 	 * Request that this alien moved based on time elapsed
@@ -61,16 +61,16 @@ public class AlienEntity extends Entity {
 	 * @param other The other entity
 	 */
 	public void collidedWith(Entity other) {
-		// collisions with aliens are handled elsewhere
+		if(!super.collidesWith(other))
+			return;
+		dx=-dx;
+		
 	}
 	public void updatePosition(double dx,double dy){
 		x+=dx;
 		y+=dy;
 	}
 
-	public Game getGame() {
-		return game;
-	}
 
 	public double getMoveSpeed() {
 		return moveSpeed;
