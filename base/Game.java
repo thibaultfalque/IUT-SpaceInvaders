@@ -10,19 +10,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import Strategie.DiagonaleMove;
+import niveau.FormationCoeur;
+import niveau.FormationRectangle;
+import niveau.Niveau;
+import Strategie.DescenteDoLogic;
+import Strategie.DescenteMove;
 import Strategie.GaucheDroiteDoLogic;
-import Strategie.RandomDoLogic;
 import Strategie.RandomMove;
-import niveau.Niveau1;
-import niveau.Niveau2;
-import niveau.Niveau3;
-import niveau.UsineAlien;
 import entities.AlienEntity;
 import entities.Entity;
 import entities.ShipEntity;
@@ -82,12 +80,12 @@ public class Game extends Canvas {
 
 	
 	//paramètre après modif code
-	private ArrayList<UsineAlien> ua=new ArrayList<UsineAlien>();
+	private ArrayList<Niveau> niveau=new ArrayList<Niveau>();
 	private int niveauCourant=0;
 	private ArrayList<ShotEntity> missile=new ArrayList<ShotEntity>();
-	private final static int WIDTH=800;
-	private final static int HEIGHT=600;
-	private Score score;
+	public final static int WIDTH=1100;
+	public final static int HEIGHT=900;
+	public Score score;
 	/**
 	 * Construct our game and set it running.
 	 */
@@ -136,11 +134,10 @@ public class Game extends Canvas {
 		
 		// initialise the entities in our game so there's something
 		// to see at startup
-		ua=new ArrayList<UsineAlien>();
-		ua.add(new Niveau1(this));
-		ua.add(new Niveau2(this));
-		ua.add(new Niveau3(this));
-		ua.add(new Niveau3(this));
+		niveau.add(new Niveau(this,new FormationRectangle(this,new DescenteMove(),new DescenteDoLogic())));
+		//niveau.add(new Niveau(this));
+		//niveau.add(new Niveau(this));
+		//niveau.add(new Niveau(this));
 		initEntities();
 		
 		score=new Score(WIDTH,HEIGHT);
@@ -152,7 +149,7 @@ public class Game extends Canvas {
 	 */
 	private void startGame() {
 		// clear out any existing entities and intialise a new set
-		ua.get(niveauCourant).getArrayAlien().clear();
+		niveau.get(niveauCourant).getArrayAlien().clear();
 		missile.clear();
 		missile=new ArrayList<ShotEntity>();
 		removeList.clear();
@@ -169,9 +166,9 @@ public class Game extends Canvas {
 	 */
 	private void initEntities() {
 		// create the player ship and place it roughly in the center of the screen
-		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
-		ua.get(niveauCourant).createArrayAlien();
-		//entities=ua.get(niveauCourant).getArrayAlien();
+		ship = new ShipEntity(this,"sprites/ship.png",WIDTH/2,HEIGHT-150);
+		niveau.get(niveauCourant).createArrayAlien(this);
+		//entities=niveau.get(niveauCourant).getArrayAlien();
 		
 	}
 	
@@ -211,7 +208,7 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		niveauCourant++;
-		if(niveauCourant>ua.size())
+		if(niveauCourant>niveau.size())
 			message="YOU HAVE FINISH THE GAME";
 		else
 			message = "Well done! You Win in !\n Your score is "+score.getScore();
@@ -223,15 +220,15 @@ public class Game extends Canvas {
 	 */
 	public void notifyAlienKilled() {
 		// reduce the alient count, if there are none left, the player has won!
-		int alienCount=ua.get(niveauCourant).getAlienCount();
-		ua.get(niveauCourant).setAlienCount(alienCount-1);
-		alienCount=ua.get(niveauCourant).getAlienCount();
+		int alienCount=niveau.get(niveauCourant).getAlienCount();
+		niveau.get(niveauCourant).setAlienCount(alienCount-1);
+		alienCount=niveau.get(niveauCourant).getAlienCount();
 		if (alienCount == 0) {
 			notifyWin();
 		}
 		// if there are still some aliens left then they all need to get faster, so
 		// speed up all the existing aliens
-		for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien()){
+		for(AlienEntity entity : niveau.get(niveauCourant).getArrayAlien()){
 			entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
 			//S'il reste moins de 5 aliens on change la strategie de déplacement
 			if(alienCount==5)
@@ -295,7 +292,7 @@ public class Game extends Canvas {
 			
 			// cycle round asking each entity to move itself
 			if (!waitingForKeyPress) {
-				for(AlienEntity ae : ua.get(niveauCourant).getArrayAlien())
+				for(AlienEntity ae : niveau.get(niveauCourant).getArrayAlien())
 					ae.move(delta);
 				for(ShotEntity m : missile)
 					m.move(delta);
@@ -303,8 +300,8 @@ public class Game extends Canvas {
 			}
 			
 			// cycle round drawing all the entities we have in the game
-            if(ua.get(niveauCourant).getArrayAlien()!=null)
-            	for(AlienEntity entity : ua.get(niveauCourant).getArrayAlien())
+            if(niveau.get(niveauCourant).getArrayAlien()!=null)
+            	for(AlienEntity entity : niveau.get(niveauCourant).getArrayAlien())
             			entity.draw(g);
             		
             if(missile!=null)
@@ -317,17 +314,17 @@ public class Game extends Canvas {
 			if(!waitingForKeyPress){
 				if(missile!=null){
 					for(ShotEntity m:missile)
-						for(AlienEntity ae:ua.get(niveauCourant).getArrayAlien()){
+						for(AlienEntity ae:niveau.get(niveauCourant).getArrayAlien()){
 							m.collidedWith(ae);
 							ae.collidedWith(m);
 						}
-					for(AlienEntity ae:ua.get(niveauCourant).getArrayAlien())
+					for(AlienEntity ae:niveau.get(niveauCourant).getArrayAlien())
 						ship.collidedWith(ae);
 				}
-				for(int i=0;i<ua.get(niveauCourant).getArrayAlien().size();i++){
-					AlienEntity ae1=ua.get(niveauCourant).getArrayAlien().get(i);
-					for(int j=i+1;j<ua.get(niveauCourant).getArrayAlien().size();j++){
-						AlienEntity ae2=ua.get(niveauCourant).getArrayAlien().get(j);
+				for(int i=0;i<niveau.get(niveauCourant).getArrayAlien().size();i++){
+					AlienEntity ae1=niveau.get(niveauCourant).getArrayAlien().get(i);
+					for(int j=i+1;j<niveau.get(niveauCourant).getArrayAlien().size();j++){
+						AlienEntity ae2=niveau.get(niveauCourant).getArrayAlien().get(j);
 						ae1.collidedWith(ae2);
 						ae2.collidedWith(ae1);
 					}
@@ -337,7 +334,7 @@ public class Game extends Canvas {
 			// remove any entity that has been marked for clear up
 			
 			if(!removeList.isEmpty()){ 
-				ua.get(niveauCourant).getArrayAlien().removeAll(removeList);
+				niveau.get(niveauCourant).getArrayAlien().removeAll(removeList);
 				missile.removeAll(removeList);
 				removeList.clear();
 			}
@@ -346,7 +343,7 @@ public class Game extends Canvas {
 			// be resolved, cycle round every entity requesting that
 			// their personal logic should be considered.
 			if (logicRequiredThisLoop) {
-			    for(Entity entity : ua.get(niveauCourant).getArrayAlien()) {
+			    for(Entity entity : niveau.get(niveauCourant).getArrayAlien()) {
 					entity.doLogic();
 				}
 				logicRequiredThisLoop = false;
@@ -388,6 +385,9 @@ public class Game extends Canvas {
 		}
 	}
 	
+	
+	
+	
 	/**
 	 * A class to handle keyboard input from the user. The class
 	 * handles both dynamic input during game play, i.e. left/right 
@@ -406,7 +406,7 @@ public class Game extends Canvas {
 		
 		/**
 		 * Notification from AWT that a key has been pressed. Note that
-		 * a key being pressed is equal to being pushed down but *NOT*
+		 * a key being pressed is eqniveaul to being pushed down but *NOT*
 		 * released. Thats where keyTyped() comes in.
 		 *
 		 * @param e The details of the key that was pressed 
