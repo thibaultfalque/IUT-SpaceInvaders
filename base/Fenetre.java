@@ -9,6 +9,6 @@ public class Fenetre extends JFrame{
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("SPACE INVADERS");
-		menu=new Menu(this);
+		//menu=new Menu(this);
 	}
 }

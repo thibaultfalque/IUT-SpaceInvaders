@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import niveau.FormationCoeur;
 import niveau.FormationRectangle;
 import niveau.Niveau;
+import Strategie.RandomDoLogic;
+import Strategie.RandomMove;
 import Strategie.GaucheDroiteDoLogic;
 import Strategie.GaucheDroiteMove;
 import entities.AlienEntity;
@@ -231,9 +233,11 @@ public class Game extends Canvas {
 		// speed up all the existing aliens
 		for(AlienEntity entity : niveau.get(niveauCourant).getArrayAlien()){
 			entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
-				//S'il reste moins de 5 aliens on change la strategie de déplacement
-				//if(alienCount==5)
-					//entity.setStrategie(new RandomMove(),new GaucheDroiteDoLogic());
+			//S'il reste moins de 5 aliens on change la strategie de déplacement
+			if(alienCount==5){
+				entity.setStrategie(new RandomMove(),new RandomDoLogic());
+				entity.setVerticalMovement(entity.getDx());
+			}
 			if(alienCount<=5){
 				entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.1);
 			}
@@ -390,7 +394,7 @@ public class Game extends Canvas {
 			// finally pause for a bit. Note: this should run us at about
 			// 100 fps but on windows this might vary each loop due to
 			// a bad implementation of timer
-			try { Thread.sleep(10); } catch (Exception e) {}
+			try { Thread.sleep(5); } catch (Exception e) {}
 		}
 	}
 	

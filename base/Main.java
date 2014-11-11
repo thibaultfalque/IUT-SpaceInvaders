@@ -18,8 +18,8 @@ public class Main {
 		
 		Fenetre fen=new Fenetre();
 		fen.setVisible(true);
-		Menu m=new Menu(fen);
-		//Game g =new Game(fen);
+		//Menu m=new Menu(fen);
+		Game g =new Game(fen);
 
 		// Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are

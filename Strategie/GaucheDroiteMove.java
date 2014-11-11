@@ -18,7 +18,6 @@ public class GaucheDroiteMove implements StrategieMove {
 			game.updateLogic();
 		// proceed with normal move
 		ae.updatePosition((ae.getDx()*delta)/1000,(ae.getDy()*delta)/1000);
-
 	}
 
 }
