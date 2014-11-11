@@ -33,10 +33,9 @@ public class Menu extends JPanel implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			Object source=e.getSource();
 			if(source==jouer){
-				//fenetre.getContentPane().setVisible(false);
+				fenetre.getContentPane().setVisible(false);
 				fenetre.setContentPane(new JPanel());
 				Game g=new Game(fenetre);
-				System.out.println("test");
 				g.gameLoop();
 			}
 			

@@ -14,7 +14,7 @@ public class GaucheDroiteMove implements StrategieMove {
 		
 		// and vice vesa, if we have reached the right hand side of 
 		// the screen and are moving right, request a logic update
-		if ((ae.getDx() > 0) && (ae.getX() > 750)) 
+		if ((ae.getDx() > 0) && (ae.getX() > 1040)) 
 			game.updateLogic();
 		// proceed with normal move
 		ae.updatePosition((ae.getDx()*delta)/1000,(ae.getDy()*delta)/1000);

@@ -1,6 +1,7 @@
 package niveau;
 
 import entities.AlienEntity;
+import base.Constante;
 import base.Game;
 import Strategie.GaucheDroiteDoLogic;
 import Strategie.GaucheDroiteMove;
@@ -20,7 +21,7 @@ public class FormationRectangle extends UsineAlien{
 		alienCount = 0;
 		for (int row=0;row<LIGNE;row++) {
 			for (int x=0;x<COLONNE;x++) {
-				AlienEntity a = new AlienEntity(game,"sprites/alien.png",(game.WIDTH-COLONNE*64)/2+x*64,100+row*64+row*10,new GaucheDroiteMove(),new GaucheDroiteDoLogic());
+				AlienEntity a = new AlienEntity(game,"sprites/alien.png",(Constante.WIDTH-COLONNE*64)/2+x*64+x*10,100+row*64+row*10,new GaucheDroiteMove(),new GaucheDroiteDoLogic());
 				alien.add(a);
 				alienCount++;
 			}

@@ -17,6 +17,7 @@ public class AlienEntity extends Entity {
 	
 	private StrategieMove move;
 	private StrategieDoLogic doLogic;
+	private boolean touch=false;
 	/**
 	 * Create a new alien entity
 	 * 
@@ -74,6 +75,16 @@ public class AlienEntity extends Entity {
 
 	public double getMoveSpeed() {
 		return moveSpeed;
+	}
+
+
+	public boolean isTouch() {
+		return touch;
+	}
+
+
+	public void setTouch(boolean touch) {
+		this.touch = touch;
 	}
 	
 	
