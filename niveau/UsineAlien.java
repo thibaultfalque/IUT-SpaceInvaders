@@ -9,35 +9,54 @@ import java.util.ArrayList;
 
 import Strategie.StrategieDoLogic;
 import Strategie.StrategieMove;
-import base.Game;
 import entities.AlienEntity;
 
 
-public  abstract class UsineAlien {
-	protected StrategieMove move;
-	protected StrategieDoLogic doLogic;
-	protected String[] tabFormation;
-	protected final static int TAILLE=9;
-	protected ArrayList<AlienEntity> alien;
-	protected int alienCount =0;
-	public UsineAlien(String path,StrategieMove move,StrategieDoLogic dl){
-		tabFormation=new String[TAILLE];
+public class UsineAlien {
+	private StrategieMove move;
+	private StrategieDoLogic doLogic;
+	private ArrayList<AlienEntity> alien;
+	private int alienCount =0;
+	private String pathTexture;
+	private ArrayList<String> tabFormation;
+	public UsineAlien(String pathTexture,String pathFichier,StrategieMove move,StrategieDoLogic dl){
+		alien=new ArrayList<AlienEntity>();
+		this.move=move;
+		this.doLogic=dl;
+		this.pathTexture=pathTexture;
+		tabFormation=new ArrayList<String>();
 		alien=new ArrayList<AlienEntity>();
 		try {
-			BufferedReader br=ouvrirFichier(path);
+			BufferedReader br=ouvrirFichier(pathFichier);
 			lireFichier(br);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.move=move;
-		this.doLogic=dl;
 	}
-	public UsineAlien(StrategieMove move,StrategieDoLogic dl){
-		alien=new ArrayList<AlienEntity>();
-		this.move=move;
-		this.doLogic=dl;
+
+	public ArrayList<AlienEntity> getAlien() {
+		return alien;
 	}
+	public int getAlienCount() {
+		return alienCount;
+	}
+	public void createArrayAlien(Niveau game) {
+		alienCount=0;
+		int i=0;
+		for(String s:tabFormation){
+			for(int j=0;j<s.length();j++){
+				if(s.charAt(j)=='1'){
+					AlienEntity a=new AlienEntity(game, pathTexture, 15*j+j*64, 15*i+i*64, move, doLogic,75,40);
+					alien.add(a);
+					alienCount++;
+				}
+			}
+			i++;
+		}
+
+	}
+	
 	private BufferedReader ouvrirFichier(String fichier) throws Exception{
 		try{
 			InputStream ips=new FileInputStream(fichier);
@@ -52,20 +71,11 @@ public  abstract class UsineAlien {
 	}
 	private void lireFichier(BufferedReader br) throws IOException{
 		String ligne;
-		int i=0;
-		while((ligne=br.readLine())!=null && i<TAILLE){
-			tabFormation[i]=ligne;
-			i++;
+		while((ligne=br.readLine())!=null){
+			tabFormation.add(ligne);
 		}
 		br.close();
 	}
-	public ArrayList<AlienEntity> getAlien() {
-		return alien;
-	}
-	public int getAlienCount() {
-		return alienCount;
-	}
-	public abstract void createArrayAlien(Game game);
 	
 
 }

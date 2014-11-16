@@ -1,7 +1,7 @@
 package Strategie;
 
+import niveau.Niveau;
 import entities.AlienEntity;
-import base.Game;
 
 public class DiagonaleDoLogic implements StrategieDoLogic{
 	public DiagonaleDoLogic(){
@@ -9,9 +9,9 @@ public class DiagonaleDoLogic implements StrategieDoLogic{
 	}
 
 	@Override
-	public void doLogic(Game game, AlienEntity ae) {
-		ae.setHorizontalMovement(-(ae.getDx()));
-		ae.setVerticalMovement(-(ae.getDy()));
+	public void doLogic(Niveau game, AlienEntity ae) {
+		ae.setHorizontalMovement(-(ae.getHorizontalMovement()));
+		ae.setVerticalMovement(-(ae.getHorizontalMovement()));
 	}
 	
 }

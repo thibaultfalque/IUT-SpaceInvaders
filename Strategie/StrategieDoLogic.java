@@ -1,8 +1,8 @@
 package Strategie;
 
+import niveau.Niveau;
 import entities.AlienEntity;
-import base.Game;
 
 public interface StrategieDoLogic {
-	public void doLogic(Game game,AlienEntity ae);
+	public void doLogic(Niveau niveau,AlienEntity ae);
 }

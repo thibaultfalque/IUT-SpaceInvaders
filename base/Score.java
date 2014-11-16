@@ -24,5 +24,8 @@ public class Score {
 		// TODO Auto-generated method stub
 		return score;
 	}
+	public void initScore(){
+		score=0;
+	}
 	
 }

@@ -1,6 +1,7 @@
 package entities;
 
-import base.Game;
+import Strategie.StrategieTir;
+import niveau.Niveau;
 
 /**
  * An entity representing a shot fired by the player's ship
@@ -9,11 +10,17 @@ import base.Game;
  */
 public class ShotEntity extends Entity {
 	/** The vertical speed at which the players shot moves */
-	private double moveSpeed = -300;
+	private double moveSpeed;
 	/** The game in which this entity exists */
-	private Game game;
+	private Niveau niveau;
+	
+	/**Les dégats qu'infligent le missile*/
+	private int degat;
 	/** True if this shot has been "used", i.e. its hit something */
 	private boolean used = false;
+	
+	
+	private StrategieTir tir;
 	
 	/**
 	 * Create a new shot from the player
@@ -23,12 +30,13 @@ public class ShotEntity extends Entity {
 	 * @param x The initial x location of the shot
 	 * @param y The initial y location of the shot
 	 */
-	public ShotEntity(Game game,String sprite,int x,int y) {
+	public ShotEntity(Niveau niveau,String sprite,int x,int y,double moveSpeed,int degat,StrategieTir t) {
 		super(sprite,x,y);
-		
-		this.game = game;
-		
+		this.niveau = niveau;
+		this.moveSpeed = moveSpeed;
 		dy = moveSpeed;
+		this.degat=degat;
+		tir=t;
 	}
 
 	/**
@@ -38,11 +46,13 @@ public class ShotEntity extends Entity {
 	 */
 	public void move(long delta) {
 		// proceed with normal move
-		super.move(delta);
+		//super.move(delta);
 		
-		// if we shot off the screen, remove ourselfs
+		tir.move(this,delta);
+		
+		// if we shot off the screen, remove yourselfs
 		if (y < -100) {
-			game.remove(this);
+			niveau.remove(this);
 		}
 	}
 	
@@ -56,22 +66,19 @@ public class ShotEntity extends Entity {
 		// prevents double kills, if we've already hit something,
 		// don't collide
 		AlienEntity ae=(AlienEntity)other;
-		if (used || ae.isTouch()) {
+		if (!Entity.collidesWith(this,other) || used || ae.isTouch()) {
 			return;
 		}
-		if(!super.collidesWith(other))
-			return;
-		// if we've hit an alien, kill it!
+		ae.retirerVie(degat);
 		
 		// remove the affected entities
-		game.remove(this);
-		
-		game.remove(other);
-		
-		// notify the game that the alien has been killed
-		game.notifyAlienKilled();
+		niveau.remove(this);
+		if(ae.getVie()<=0){
+			niveau.remove(other);
+			niveau.notifyAlienKilled();
+			ae.setTouch(true);
+		}
 		used = true;
-		ae.setTouch(true);
 		
 	}
 
@@ -79,6 +86,14 @@ public class ShotEntity extends Entity {
     public void doLogic() {
         // FIXME Auto-generated method stub
         
+    }
+
+	public double getDegat() {
+		return degat;
+	}
+    public void updatePosition(double x,double y){
+    	this.x+=x;
+    	this.y+=y;
     }
 
 }

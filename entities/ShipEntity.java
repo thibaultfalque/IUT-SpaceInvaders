@@ -1,7 +1,7 @@
 package entities;
 
+import niveau.Niveau;
 import base.Constante;
-import base.Game;
 
 /**
  * The entity that represents the players ship
@@ -9,9 +9,11 @@ import base.Game;
  * @author Kevin Glass
  */
 public class ShipEntity extends Entity {
-	/** The game in which the ship exists */
-	private Game game;
-	
+	/** The level in which the ship exists */
+	private Niveau niveau;
+	/** The speed at which the player's ship should move (pixels/sec) */
+	private double moveSpeed;
+	private int vie;
 	/**
 	 * Create a new entity to represent the players ship
 	 *  
@@ -19,11 +21,15 @@ public class ShipEntity extends Entity {
 	 * @param ref The reference to the sprite to show for the ship
 	 * @param x The initial x location of the player's ship
 	 * @param y The initial y location of the player's ship
+	 * @param moveSpeed vitesse du joueur
+	 * @param vie la vie initiale du joueur
 	 */
-	public ShipEntity(Game game,String ref,int x,int y) {
+	public ShipEntity(Niveau niveau,String ref,int x,int y,double moveSpeed,int vie) {
 		super(ref,x,y);
 		
-		this.game = game;
+		this.niveau = niveau;
+		this.moveSpeed=moveSpeed;
+		this.vie=vie;
 	}
 	
 	/**
@@ -55,8 +61,10 @@ public class ShipEntity extends Entity {
 	public void collidedWith(Entity other) {
 		// if its an alien, notify the game that the player
 		// is dead
-		if(super.collidesWith(other))
-			game.notifyDeath();
+		if(Entity.collidesWith(this,other))
+			vie-=((ShotEntity)other).getDegat();
+		if(vie==0)
+			niveau.notifyDeath();
 		
 	}
 
@@ -65,4 +73,15 @@ public class ShipEntity extends Entity {
         // FIXME Auto-generated method stub
         
     }
+
+	public double getMoveSpeed() {
+		return moveSpeed;
+	}
+
+	public int getVie() {
+		return vie;
+	}
+	
+    
+    
 }

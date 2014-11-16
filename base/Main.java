@@ -1,9 +1,5 @@
 package base;
 
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class Main {
 	/**
@@ -16,14 +12,13 @@ public class Main {
 
 	public static void main(String argv[]) {
 		
-		Fenetre fen=new Fenetre();
-		fen.setVisible(true);
-		//Menu m=new Menu(fen);
-		Game g =new Game(fen);
-
+		//Fenetre fen=new Fenetre();
+		//fen.setVisible(true);
+		
+		Game g =new Game();
 		// Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are
 		// using the actual main thread to run the game.
-		//g.gameLoop();
+		g.gameLoop();
 	}
 }

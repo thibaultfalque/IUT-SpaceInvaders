@@ -1,8 +1,8 @@
 package Strategie;
 
-import base.Game;
+import niveau.Niveau;
 import entities.AlienEntity;
 
 public interface StrategieMove {
-	public void move(long delta,AlienEntity ae,Game game);
+	public void move(long delta,AlienEntity ae,Niveau niveau);
 }
