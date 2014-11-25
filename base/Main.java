@@ -11,10 +11,7 @@ public class Main {
 	 */
 
 	public static void main(String argv[]) {
-		
-		//Fenetre fen=new Fenetre();
-		//fen.setVisible(true);
-		
+
 		Game g =new Game();
 		// Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are

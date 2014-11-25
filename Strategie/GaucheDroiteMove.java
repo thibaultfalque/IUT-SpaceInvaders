@@ -1,5 +1,6 @@
 package Strategie;
 
+import base.Constante;
 import niveau.Niveau;
 import entities.AlienEntity;
 
@@ -14,11 +15,17 @@ public class GaucheDroiteMove implements StrategieMove {
 		
 		// and vice vesa, if we have reached the right hand side of 
 		// the screen and are moving right, request a logic update
-		if ((ae.getHorizontalMovement() > 0) && (ae.getX() > 1040)) 
+		if ((ae.getHorizontalMovement() > 0) && (ae.getX() > Constante.WIDTH-ae.getSprite().getWidth())) 
 			game.updateLogic();
 		// proceed with normal move
 		ae.updatePosition((ae.getHorizontalMovement()*delta)/1000,(ae.getVerticalMovement()*delta)/1000);
 
+	}
+
+	@Override
+	public void init(AlienEntity ae) {
+		ae.setHorizontalMovement(-ae.getMoveSpeed());
+		
 	}
 
 }

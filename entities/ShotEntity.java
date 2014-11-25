@@ -1,5 +1,6 @@
 package entities;
 
+import base.Constante;
 import Strategie.StrategieTir;
 import niveau.Niveau;
 
@@ -9,8 +10,7 @@ import niveau.Niveau;
  * @author Kevin Glass
  */
 public class ShotEntity extends Entity {
-	/** The vertical speed at which the players shot moves */
-	private double moveSpeed;
+
 	/** The game in which this entity exists */
 	private Niveau niveau;
 	
@@ -30,13 +30,12 @@ public class ShotEntity extends Entity {
 	 * @param x The initial x location of the shot
 	 * @param y The initial y location of the shot
 	 */
-	public ShotEntity(Niveau niveau,String sprite,int x,int y,double moveSpeed,int degat,StrategieTir t) {
-		super(sprite,x,y);
+	public ShotEntity(Niveau niveau,String sprite,double x,double y,double moveSpeed,int degat,StrategieTir t) {
+		super(sprite,x,y,moveSpeed);
 		this.niveau = niveau;
-		this.moveSpeed = moveSpeed;
-		dy = moveSpeed;
 		this.degat=degat;
 		tir=t;
+		tir.init(this);
 	}
 
 	/**
@@ -45,17 +44,13 @@ public class ShotEntity extends Entity {
 	 * @param delta The time that has elapsed since last move
 	 */
 	public void move(long delta) {
-		// proceed with normal move
-		//super.move(delta);
-		
 		tir.move(this,delta);
 		
 		// if we shot off the screen, remove yourselfs
-		if (y < -100) {
+		if (y < -100 || y>Constante.HEIGHT || x<0 || x>Constante.WIDTH) {
 			niveau.remove(this);
 		}
 	}
-	
 	/**
 	 * Notification that this shot has collided with another
 	 * entity
@@ -96,4 +91,12 @@ public class ShotEntity extends Entity {
     	this.y+=y;
     }
 
+	public boolean isUsed() {
+		return used;
+	}
+
+	public void setUsed(boolean used) {
+		this.used = used;
+	}
+    
 }

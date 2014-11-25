@@ -1,14 +1,14 @@
-package GUI;
+package entities;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class ProgressBar {
+public class LifeBar {
 	private int x,y;
 	private float step;
 	private static float widthIitiale=64;
 	private float width=widthIitiale;
-	public ProgressBar(int x,int y){
+	public LifeBar(int x,int y){
 		this.x=x;
 		this.y=y;
 		

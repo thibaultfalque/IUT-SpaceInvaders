@@ -10,8 +10,7 @@ public class RandomDoLogic implements StrategieDoLogic {
 
 		if(ae.getX()<10 || ae.getX()>1040)
 			ae.setHorizontalMovement(-(ae.getHorizontalMovement()));
-			
-		
+
 		if(ae.getY()<10 || ae.getY()>600)
 			ae.setVerticalMovement(-(ae.getVerticalMovement()));
 		

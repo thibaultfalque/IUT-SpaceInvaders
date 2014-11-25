@@ -1,6 +1,7 @@
 package entities;
 
 import niveau.Niveau;
+import Strategie.StrategieTir;
 import base.Constante;
 
 /**
@@ -11,9 +12,16 @@ import base.Constante;
 public class ShipEntity extends Entity {
 	/** The level in which the ship exists */
 	private Niveau niveau;
-	/** The speed at which the player's ship should move (pixels/sec) */
-	private double moveSpeed;
+	
 	private int vie;
+	private int vieDepart;
+	private StrategieTir tir;
+	private String pathTextureMissile;
+	private double moveSpeedMissile;
+	private int degat;
+	/** The time at which last fired a shot */
+	private long lastFire=0;
+	
 	/**
 	 * Create a new entity to represent the players ship
 	 *  
@@ -24,12 +32,16 @@ public class ShipEntity extends Entity {
 	 * @param moveSpeed vitesse du joueur
 	 * @param vie la vie initiale du joueur
 	 */
-	public ShipEntity(Niveau niveau,String ref,int x,int y,double moveSpeed,int vie) {
-		super(ref,x,y);
-		
+	public ShipEntity(Niveau niveau,String ref,int x,int y,double moveSpeed,int vie,String pathTextureMissile, int degat, double moveSpeedMissile,StrategieTir tir) {
+		super(ref,x,y,moveSpeed);
 		this.niveau = niveau;
-		this.moveSpeed=moveSpeed;
 		this.vie=vie;
+		this.vieDepart=vie;
+		this.pathTextureMissile = pathTextureMissile;
+		this.degat = degat;
+		this.moveSpeedMissile = moveSpeedMissile;
+		this.tir=tir;
+		
 	}
 	
 	/**
@@ -61,9 +73,12 @@ public class ShipEntity extends Entity {
 	public void collidedWith(Entity other) {
 		// if its an alien, notify the game that the player
 		// is dead
-		if(Entity.collidesWith(this,other))
-			vie-=((ShotEntity)other).getDegat();
-		if(vie==0)
+		if(((ShotEntity)other).isUsed() || !Entity.collidesWith(this,other))
+			return;
+		vie-=((ShotEntity)other).getDegat();
+		((ShotEntity)other).setUsed(true);
+		niveau.remove(other);
+		if(vie<=0)
 			niveau.notifyDeath();
 		
 	}
@@ -74,12 +89,21 @@ public class ShipEntity extends Entity {
         
     }
 
-	public double getMoveSpeed() {
-		return moveSpeed;
-	}
-
+    public void init(){
+    	vie=vieDepart;
+    	x=Constante.WIDTH/2;
+    	y=Constante.HEIGHT-50;
+    }
 	public int getVie() {
 		return vie;
+	}
+	public ShotEntity getMissileFire(){
+		lastFire=System.currentTimeMillis();
+		return new ShotEntity(niveau, pathTextureMissile, x, y, moveSpeedMissile, degat, tir);
+	}
+
+	public long getLastFire() {
+		return lastFire;
 	}
 	
     

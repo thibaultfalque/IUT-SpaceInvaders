@@ -4,10 +4,11 @@ package niveau;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Random;
 
 import Strategie.RandomDoLogic;
 import Strategie.RandomMove;
-import Strategie.TirVertical;
+import Strategie.StrategieTir;
 import base.Constante;
 import base.Game;
 import base.KeyInputHandler;
@@ -29,16 +30,15 @@ public class Niveau{
 	
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop=false;
-	/** The time at which last fired a shot */
-	private long lastFire=0;
+
 	
 	private long timeDebut;
 	private long timeFin;
 	
-	public Niveau(Game game,UsineAlien sf){
+	public Niveau(Game game,UsineAlien sf,String pathTexture,int vie, double moveSpeed,String pathTextureMissile,int degat,double moveSpeedMissile,StrategieTir tir){
 		this.sf=sf;
 		this.game=game;
-		ship = new ShipEntity(this,"sprites/ship.png",Constante.WIDTH/2,Constante.HEIGHT-150,300,100);
+		ship = new ShipEntity(this,pathTexture,Constante.WIDTH/2,Constante.HEIGHT-50,moveSpeed,vie,pathTextureMissile,degat,moveSpeedMissile,tir);
 	}
 
 	/**
@@ -102,6 +102,7 @@ public class Niveau{
 		missileShip.clear();
 		removeArray.clear();
 		createArrayAlien();
+		ship.init();
 		timeDebut=System.currentTimeMillis();
 	}
 	
@@ -119,8 +120,12 @@ public class Niveau{
 	
 	private void alienFire() {
 		for(AlienEntity alien:alienEntities){
-			//if(alien.getX()<Constante.WIDTH/2)
-				//missileAlien.add(new ShotEntity(this, , x, y, moveSpeed, degat, t))
+			if (System.currentTimeMillis() - alien.getLastFire() < Constante.FIRING_INTERVAL) {
+				return;
+			}
+			Random rd=new Random();
+			if(rd.nextInt(100)<=2)
+				missileAlien.add(alien.getMissileFire());
 		}
 		
 	}
@@ -132,12 +137,20 @@ public class Niveau{
 				if(Entity.collidesWith(missile, alien))
 					game.changeScore(100);
 			}
+		
 		for(ShotEntity missile:missileAlien)
 			ship.collidedWith(missile);
-		for(AlienEntity alien:alienEntities){
+		
+		for(AlienEntity alien:alienEntities)
 			if(Entity.collidesWith(alien,ship))
 				notifyDeath();
-				
+		
+		for(int i=0;i<alienEntities.size();i++){
+			AlienEntity ae1=alienEntities.get(i);
+			for(int j=i+1;j<alienEntities.size();j++){
+				AlienEntity ae2=alienEntities.get(j);
+				ae1.collidedWith(ae2);
+			}
 		}
 		
 	}
@@ -146,12 +159,16 @@ public class Niveau{
 			alien.move(delta);
 		for(ShotEntity missile:missileShip)
 			missile.move(delta);
+		for(ShotEntity missile:missileAlien)
+			missile.move(delta);
 		ship.move(delta);
 	}
 	private void drawManager(Graphics g){
 		for(AlienEntity alien:alienEntities)
 			alien.draw(g);
 		for(ShotEntity missile:missileShip)
+			missile.draw(g);
+		for(ShotEntity missile:missileAlien)
 			missile.draw(g);
 		ship.draw(g);
 	}
@@ -162,11 +179,10 @@ public class Niveau{
 		logicRequiredThisLoop=false;
 	}
 	private void tryToFire(){
-		if (System.currentTimeMillis() - lastFire < Constante.FIRING_INTERVAL) {
+		if (System.currentTimeMillis() - ship.getLastFire() < Constante.FIRING_INTERVAL) {
 			return;
 		}
-		lastFire = System.currentTimeMillis();
-		missileShip.add(new ShotEntity(this,"sprites/laser3_haut.png",ship.getX()+15,ship.getY()-10,-300,20,new TirVertical()));
+		missileShip.add(ship.getMissileFire());
 	}
 	private void createArrayAlien(){
 		sf.createArrayAlien(this);
@@ -174,10 +190,10 @@ public class Niveau{
 		alienCount=sf.getAlienCount();
 	}
 	private void removeList(){
-		if(removeArray.isEmpty() || alienEntities.isEmpty() || missileShip.isEmpty())
-			return;
+		
 		alienEntities.removeAll(removeArray);
 		missileShip.removeAll(removeArray);
+		missileAlien.removeAll(removeArray);
 		removeArray.clear();	
 	}
 }

@@ -31,6 +31,7 @@ public abstract class Entity {
 	/** The current speed of this entity vertically (pixels/sec) */
 	protected double dy;
 	
+	protected double moveSpeed;
 	/**
 	 * Construct a entity based on a sprite image and a location.
 	 * 
@@ -38,10 +39,11 @@ public abstract class Entity {
  	 * @param x The initial x location of this entity
 	 * @param y The initial y location of this entity
 	 */
-	public Entity(String ref,int x,int y) {
+	public Entity(String ref,double x,double y,double moveSpeed) {
 		this.sprite = SpriteStore.get().getSprite(ref);
 		this.x = x;
 		this.y = y;
+		this.moveSpeed=moveSpeed;
 	}
 	
 	/**
@@ -147,16 +149,6 @@ public abstract class Entity {
 	 */
 	public abstract void collidedWith(Entity other);
 
-	
-/*
-	public double getDx() {
-		return dx;
-	}
-
-	public double getDy() {
-		return dy;
-	}
-*/
 	public void setX(double x) {
 		this.x = x;
 	}
@@ -164,7 +156,13 @@ public abstract class Entity {
 	public void setY(double y) {
 		this.y = y;
 	}
-	
+	public double getMoveSpeed(){
+		return moveSpeed;
+	}
+
+	public Sprite getSprite() {
+		return sprite;
+	}
 	
 	
 }

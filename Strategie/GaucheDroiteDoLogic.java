@@ -14,7 +14,7 @@ public class GaucheDroiteDoLogic implements StrategieDoLogic {
 				
 		// if we've reached the bottom of the screen then the player
 		// dies
-		if (ae.getY() > 840) 
+		if (ae.getY() > 650) 
 			game.notifyDeath();
 				
 		

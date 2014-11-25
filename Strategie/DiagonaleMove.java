@@ -1,25 +1,27 @@
 package Strategie;
 
+import base.Constante;
 import niveau.Niveau;
 import entities.AlienEntity;
 
 public class DiagonaleMove implements StrategieMove {
-	public DiagonaleMove(){
-		
+	@Override
+	public void move(long delta, AlienEntity ae,Niveau game) {
+		ae.updatePosition((ae.getHorizontalMovement()*delta)/1000,(ae.getVerticalMovement()*delta)/1000);
+		if(ae.getY()<20)
+			game.updateLogic();
 	}
 
 	@Override
-	public void move(long delta, AlienEntity ae,Niveau game) {
-	
-		if ((ae.getHorizontalMovement() > 0) && (ae.getX() > 550)) 
-			game.updateLogic();
-		if ((ae.getHorizontalMovement() < 0) && (ae.getX() < 10)) 
-			game.updateLogic();
-		if((ae.getVerticalMovement()<0)&&(ae.getY()<50))
-			game.updateLogic();
-		if((ae.getVerticalMovement()>0)&&(ae.getY()>750))
-			game.updateLogic();
-		ae.updatePosition((ae.getHorizontalMovement()*delta)/1000,(ae.getVerticalMovement()*delta)/1000);
+	public void init(AlienEntity ae) {
+		if(ae.getX()<Constante.WIDTH/2){
+			ae.setHorizontalMovement(ae.getMoveSpeed());
+			ae.setVerticalMovement(ae.getMoveSpeed());
+		}
+		else{
+			ae.setHorizontalMovement(-ae.getMoveSpeed());
+			ae.setVerticalMovement(ae.getMoveSpeed());
+		}
 	}
 	
 	

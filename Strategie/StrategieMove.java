@@ -5,4 +5,5 @@ import entities.AlienEntity;
 
 public interface StrategieMove {
 	public void move(long delta,AlienEntity ae,Niveau niveau);
+	public void init(AlienEntity ae);
 }

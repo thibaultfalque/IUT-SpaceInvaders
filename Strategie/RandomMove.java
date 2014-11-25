@@ -7,9 +7,7 @@ import entities.AlienEntity;
 
 public class RandomMove implements StrategieMove {
 	private long tmp=500;
-	public RandomMove(){
-		
-	}
+
 
 	@Override
 	public void move(long delta, AlienEntity ae,Niveau game) {
@@ -43,6 +41,13 @@ public class RandomMove implements StrategieMove {
 			ae.setVerticalMovement(ae.getVerticalMovement()*valy);
 		}
 		ae.updatePosition((ae.getHorizontalMovement()*delta)/1000,(ae.getVerticalMovement()*delta)/1000);
+		
+	}
+
+
+	@Override
+	public void init(AlienEntity ae) {
+		// TODO Auto-generated method stub
 		
 	}
 }
